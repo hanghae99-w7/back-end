@@ -1,4 +1,4 @@
-package com.example.gentle.domain;
+package com.example.gentle.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

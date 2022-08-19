@@ -6,7 +6,7 @@ import com.example.gentle.domain.UserDetailsImpl;
 import com.example.gentle.dto.TokenDto;
 import com.example.gentle.dto.requestDto.KakaoUserInfoDto;
 import com.example.gentle.dto.requestDto.LoginRequestDto;
-import com.example.gentle.dto.requestDto.NicknameCheckRequestDto;
+import com.example.gentle.dto.requestDto.EmailCheckRequestDto;
 import com.example.gentle.dto.requestDto.SignupRequestDto;
 import com.example.gentle.dto.responseDto.Message;
 import com.example.gentle.jwt.TokenProvider;
@@ -57,7 +57,7 @@ public class MemberService {
 
     //닉네임 더블체크 함수, 이미 존재하는 닉네임인지 아닌지 확인
     @Transactional
-    public ResponseEntity<?> emailDubCheck(NicknameCheckRequestDto requestDto) {
+    public ResponseEntity<?> emailDubCheck(EmailCheckRequestDto requestDto) {
         Member member = isPresentMember(requestDto.getEmail());
         if (null != member) {
             return new ResponseEntity<>(Message.fail("EMAIL_ALREADY_USE", "사용 불가능한 이메일입니다."), HttpStatus.ALREADY_REPORTED);

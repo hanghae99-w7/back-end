@@ -3,6 +3,6 @@ package com.example.gentle.dto.requestDto;
 import lombok.Getter;
 
 @Getter
-public class NicknameCheckRequestDto {
+public class EmailCheckRequestDto {
     private String email;
 }

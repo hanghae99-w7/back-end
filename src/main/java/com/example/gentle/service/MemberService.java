@@ -1,20 +1,23 @@
 package com.example.gentle.service;
 
 
+import com.example.gentle.domain.Member;
+import com.example.gentle.domain.UserDetailsImpl;
+import com.example.gentle.dto.TokenDto;
+import com.example.gentle.dto.requestDto.KakaoUserInfoDto;
+import com.example.gentle.dto.requestDto.LoginRequestDto;
+import com.example.gentle.dto.requestDto.EmailCheckRequestDto;
+import com.example.gentle.dto.requestDto.SignupRequestDto;
+import com.example.gentle.dto.responseDto.Message;
+import com.example.gentle.jwt.TokenProvider;
+import com.example.gentle.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springw6.backend.controller.request.*;
-import com.springw6.backend.domain.Member;
-import com.springw6.backend.domain.Message;
-import com.springw6.backend.domain.UserDetailsImpl;
-import com.springw6.backend.jwt.TokenProvider;
-import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,15 +41,14 @@ public class MemberService {
     //회원가입 함수
     @Transactional
     public ResponseEntity<?> signupMember(SignupRequestDto requestDto) {
-        //현재 있는 닉네임인지 확인, 만약 널값이 아니면 이미 존재하는 닉네임이란 뜻으로, 아이디가 중복된다는 메시지 출력
-        if (null != isPresentMember(requestDto.getNickname())) {
+        //현재 있는 닉네임인지 확인, 만약 널값이 아니면 이미 존재하는 이메일이란 뜻으로, 이메일이 중복된다는 메시지 출력
+        if (null != isPresentMember(requestDto.getEmail())) {
             return new ResponseEntity<>(Message.fail("DUPLICATED_NICKNAME", "아이디가 중복됩니다."), HttpStatus.ALREADY_REPORTED);
         }
         //중복되지 않으면 발더를 이용해 생성 후 저장
         Member member = Member.builder()
-                .nickname(requestDto.getNickname())
+                .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
-                .loginId(requestDto.getLoginId())
                 .build();
         memberRepository.save(member);
         //리턴문
@@ -56,35 +57,21 @@ public class MemberService {
 
     //닉네임 더블체크 함수, 이미 존재하는 닉네임인지 아닌지 확인
     @Transactional
-    public ResponseEntity<?> nicknameDubCheck(NicknameCheckRequestDto requestDto) {
-
-        Member member = isPresentMember(requestDto.getNickname());
-        //널값이 아니면 이미 존재하는 닉네임이라는 뜻
-        if (null != member) {
-            return new ResponseEntity<>(Message.fail("NICKNAME_ALREADY_USE", "사용 불가능한 닉네임입니다."), HttpStatus.ALREADY_REPORTED);
-        }
-        //널값이면 사용 가능하다는 메시지 출력
-        return new ResponseEntity<>(Message.success("사용 가능한 닉네임입니다."), HttpStatus.OK);
-    }
-
-    //아이디 더블체크 함수
-    @Transactional
-    public ResponseEntity<?> loginIdDubCheck(LoginIdCheckRequestDto requestDto) {
-
-        Member member = isPresentLoginId(requestDto.getLoginId());
-        //널값이 아니면 이미 존재하는 아이디라는 뜻
+    public ResponseEntity<?> emailDubCheck(EmailCheckRequestDto requestDto) {
+        Member member = isPresentMember(requestDto.getEmail());
         if (null != member) {
             return new ResponseEntity<>(Message.fail("EMAIL_ALREADY_USE", "사용 불가능한 이메일입니다."), HttpStatus.ALREADY_REPORTED);
         }
-        //널값이면 사용 가능하다는 메시지 출력
         return new ResponseEntity<>(Message.success("사용 가능한 이메일입니다."), HttpStatus.OK);
     }
+
+
 
     //로그인 함수
     @Transactional
     public ResponseEntity<?> loginMembers(LoginRequestDto requestDto, HttpServletResponse response) {
         //로그인 리퀘스트에서 로그인 아이디를 가져옴
-        Member member = isPresentLoginId(requestDto.getLoginId());
+        Member member = isPresentLoginId(requestDto.getEmail());
         //널값이면 아무것도 입력 안했다고 판단하여, 이메일을 입력하라는 메시지 출력
         if (null == member) {
             return new ResponseEntity<>(Message.fail("LOGINID_NOT_FOUND", "이메일을 입력하세요."), HttpStatus.UNAUTHORIZED);
@@ -116,23 +103,34 @@ public class MemberService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = kakaoUserInfo.getId();
+        Long kakaoId = kakaoUserInfo.getKakaoIdInDb();
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
         if (kakaoUser == null) {
             // 회원가입
             // username: kakao nickname
-            String nickname = kakaoUserInfo.getNickname();
+            String email = kakaoUserInfo.getEmail();
 
             // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-            // email: kakao email
-            String loginId = kakaoUserInfo.getLoginId();
+            // 그외 정보들 가져오기
+            String birth = kakaoUserInfo.getBirth();
+            String gender = kakaoUserInfo.getGender();
+            String name =  kakaoUserInfo.getName();
+            String country = kakaoUserInfo.getCountry();
 
-            kakaoUser = new Member(nickname, encodedPassword, loginId, kakaoId);
+
+            kakaoUser =Member.builder()
+                    .email(email)
+                    .password(encodedPassword)
+                    .birth(birth)
+                    .gender(gender)
+                    .name(name)
+                    .country(country)
+                    .build();
             memberRepository.save(kakaoUser);
         }
 
@@ -141,13 +139,13 @@ public class MemberService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Member member = isPresentLoginId(kakaoUser.getLoginId());
+        Member member = isPresentLoginId(kakaoUser.getEmail());
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         return tokenDto;
 
     }
 
-    @Value("${myKaKaoRestAplKey}")
+    @Value("${4fda54c1c0555530ad9fd4bb18d81716}")
     private String myKaKaoRestAplKey;
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -209,7 +207,11 @@ public class MemberService {
                 .get("email").asText();
 
         System.out.println("카카오 사용자 정보: " + id + ", " + nickname + ", " + loginId);
-        return new KakaoUserInfoDto(id, nickname, loginId);
+        return KakaoUserInfoDto.builder()
+                .kakaoIdInDb(id)
+                .email(loginId)
+                .name(nickname)
+                .build();
     }
 
     //닉네임 검증 함수

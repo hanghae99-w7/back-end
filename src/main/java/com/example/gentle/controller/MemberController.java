@@ -1,16 +1,19 @@
 package com.example.gentle.controller;
 
+import com.example.gentle.dto.TokenDto;
+import com.example.gentle.dto.requestDto.LoginIdCheckRequestDto;
+import com.example.gentle.dto.requestDto.LoginRequestDto;
+import com.example.gentle.dto.requestDto.NicknameCheckRequestDto;
+import com.example.gentle.dto.requestDto.SignupRequestDto;
+import com.example.gentle.dto.responseDto.Message;
+import com.example.gentle.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.springw6.backend.controller.request.*;
-import com.springw6.backend.domain.Message;
-import com.springw6.backend.service.MemberService;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor

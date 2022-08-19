@@ -145,7 +145,7 @@ public class MemberService {
 
     }
 
-    @Value("${4fda54c1c0555530ad9fd4bb18d81716}")
+    @Value("${myKaKaoRestAplKey}")
     private String myKaKaoRestAplKey;
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -216,15 +216,15 @@ public class MemberService {
 
     //닉네임 검증 함수
     @Transactional(readOnly = true)
-    public Member isPresentMember(String loginId) {
-        Optional<Member> optionalMember = memberRepository.findByNickname(loginId);
+    public Member isPresentMember(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
         return optionalMember.orElse(null);
     }
 
     //로그인 아이디 검증 함수
     @Transactional(readOnly = true)
-    public Member isPresentLoginId(String nickname) {
-        Optional<Member> optionalLoginId = memberRepository.findByLoginId(nickname);
+    public Member isPresentLoginId(String name) {
+        Optional<Member> optionalLoginId = memberRepository.findByName(name);
         return optionalLoginId.orElse(null);
     }
 

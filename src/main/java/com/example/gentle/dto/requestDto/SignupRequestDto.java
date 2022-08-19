@@ -9,5 +9,9 @@ import javax.persistence.GeneratedValue;
 public class SignupRequestDto {
     private String email;
     private String password;
+    private String birth;
+    private String name;
+    private String country;
+    private String gender;
 
 }

@@ -28,7 +28,7 @@ public class MemberController {
     }
 
     @PostMapping("/api/emailcheck")
-    public ResponseEntity<?> nicknameDubCheck(@RequestBody EmailCheckRequestDto requestDto) {
+    public ResponseEntity<?> emailDubCheck(@RequestBody EmailCheckRequestDto requestDto) {
         return memberService.emailDubCheck(requestDto);
     }
 

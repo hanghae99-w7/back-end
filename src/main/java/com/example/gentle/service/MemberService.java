@@ -42,12 +42,16 @@ public class MemberService {
     @Transactional
     public ResponseEntity<?> signupMember(SignupRequestDto requestDto) {
         //현재 있는 닉네임인지 확인, 만약 널값이 아니면 이미 존재하는 이메일이란 뜻으로, 이메일이 중복된다는 메시지 출력
-        if (null != isPresentName(requestDto.getEmail())) {
+        if (null != isPresentEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(Message.fail("DUPLICATED_NICKNAME", "아이디가 중복됩니다."), HttpStatus.ALREADY_REPORTED);
         }
         //중복되지 않으면 발더를 이용해 생성 후 저장
         Member member = Member.builder()
                 .email(requestDto.getEmail())
+                .birth(requestDto.getBirth())
+                .gender(requestDto.getGender())
+                .country(requestDto.getCountry())
+                .name(requestDto.getName())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .build();
         memberRepository.save(member);
@@ -58,7 +62,7 @@ public class MemberService {
     //닉네임 더블체크 함수, 이미 존재하는 닉네임인지 아닌지 확인
     @Transactional
     public ResponseEntity<?> emailDubCheck(EmailCheckRequestDto requestDto) {
-        Member member = isPresentName(requestDto.getEmail());
+        Member member = isPresentEmail(requestDto.getEmail());
         if (null != member) {
             return new ResponseEntity<>(Message.fail("EMAIL_ALREADY_USE", "사용 불가능한 이메일입니다."), HttpStatus.ALREADY_REPORTED);
         }
@@ -214,17 +218,10 @@ public class MemberService {
                 .build();
     }
 
-    //닉네임 검증 함수
-    @Transactional(readOnly = true)
-    public Member isPresentName(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        return optionalMember.orElse(null);
-    }
-
     //로그인 아이디 검증 함수
     @Transactional(readOnly = true)
-    public Member isPresentEmail(String name) {
-        Optional<Member> optionalLoginId = memberRepository.findByName(name);
+    public Member isPresentEmail(String email) {
+        Optional<Member> optionalLoginId = memberRepository.findByEmail(email);
         return optionalLoginId.orElse(null);
     }
 

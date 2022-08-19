@@ -38,6 +38,9 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private String country;
 
+    @Column
+    private Long kakaoId;
+
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }

@@ -1,5 +1,6 @@
 package com.example.gentle.domain;
 
+import com.example.gentle.util.Authority;
 import com.example.gentle.util.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,9 @@ public class Member extends Timestamped {
 
     @Column
     private Long kakaoId;
+
+    @Column
+    private Authority role;
 
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);

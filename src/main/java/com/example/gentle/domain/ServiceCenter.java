@@ -22,10 +22,10 @@ public class ServiceCenter extends Timestamped {
     @ManyToOne
     private Member member;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
 }

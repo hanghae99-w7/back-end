@@ -26,7 +26,7 @@ public class Basket extends Timestamped {
 
     @JoinColumn(name = "sunglass", nullable = true)
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Sunglass> sunglass;
+    private List<Sunglasses> sunglasses;
 
     @JoinColumn(name = "member", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

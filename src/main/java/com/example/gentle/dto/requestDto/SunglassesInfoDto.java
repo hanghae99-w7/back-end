@@ -1,4 +1,4 @@
-package com.example.gentle.dto;
+package com.example.gentle.dto.requestDto;
 
 
 public class SunglassesInfoDto {

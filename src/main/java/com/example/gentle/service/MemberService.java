@@ -1,6 +1,5 @@
 package com.example.gentle.service;
 
-
 import com.example.gentle.domain.Member;
 import com.example.gentle.domain.UserDetailsImpl;
 import com.example.gentle.dto.TokenDto;
@@ -70,7 +69,6 @@ public class MemberService {
     }
 
 
-
     //로그인 함수
     @Transactional
     public ResponseEntity<?> loginMembers(LoginRequestDto requestDto, HttpServletResponse response) {
@@ -114,18 +112,19 @@ public class MemberService {
         if (kakaoUser == null) {
             // 회원가입
             // username: kakao nickname
-            String email = kakaoUserInfo.getEmail();
+            String name = kakaoUserInfo.getName();
 
             // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
+            //카카오 이메일
+            String email = kakaoUserInfo.getEmail();
+
             // 그외 정보들 가져오기
             String birth = kakaoUserInfo.getBirth();
             String gender = kakaoUserInfo.getGender();
-            String name =  kakaoUserInfo.getName();
-            String country = kakaoUserInfo.getCountry();
-
+            String country = "KOR";
 
             kakaoUser =Member.builder()
                     .email(email)
@@ -205,16 +204,16 @@ public class MemberService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
+        String name = jsonNode.get("properties")
                 .get("nickname").asText();
-        String loginId = jsonNode.get("kakao_account")
+        String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
-        System.out.println("카카오 사용자 정보: " + id + ", " + nickname + ", " + loginId);
+        System.out.println("카카오 사용자 정보: " + id + ", " + name + ", " + email);
         return KakaoUserInfoDto.builder()
                 .kakaoIdInDb(id)
-                .email(loginId)
-                .name(nickname)
+                .email(email)
+                .name(name)
                 .build();
     }
 

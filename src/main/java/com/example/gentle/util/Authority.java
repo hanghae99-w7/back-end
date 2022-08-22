@@ -1,6 +1,6 @@
 package com.example.gentle.util;
 
 public enum Authority {
-    ROLE_MEMBER,
-    ROLE_GUEST
+    USER, // 사용자 권한
+    ADMIN // 관리자 권한
 }

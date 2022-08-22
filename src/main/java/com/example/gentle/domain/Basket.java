@@ -20,10 +20,6 @@ public class Basket extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "glasses", nullable = true)
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Glasses> glasses;
-
     @JoinColumn(name = "sunglass", nullable = true)
     @OneToMany(fetch = FetchType.LAZY)
     private List<Sunglasses> sunglasses;

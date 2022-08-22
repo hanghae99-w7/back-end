@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Getter
@@ -20,15 +19,12 @@ public class Basket extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "glasses", nullable = true)
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Glasses> glasses;
-
-    @JoinColumn(name = "sunglass", nullable = true)
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Sunglasses> sunglasses;
+    @JoinColumn(name = "ItemInfo")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ItemInfo itemInfo;
 
     @JoinColumn(name = "member", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
 }

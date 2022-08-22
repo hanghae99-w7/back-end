@@ -32,4 +32,5 @@ public class ItemInfo extends Timestamped {
 
     @Column(nullable = false)
     private String category;
+    
 }

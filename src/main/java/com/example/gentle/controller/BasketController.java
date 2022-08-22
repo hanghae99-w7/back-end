@@ -1,26 +1,27 @@
 package com.example.gentle.controller;
 
-
+import com.example.gentle.dto.requestDto.BasketRequestDto;
 import com.example.gentle.dto.responseDto.Message;
-import com.example.gentle.repository.BasketRepository;
+import com.example.gentle.service.BasketService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/basket")
+@RequestMapping("/api/item")
 public class BasketController {
 
-    private final BasketRepository basketRepository;
+    private final BasketService basketService;
 
     // 장바구니에 상품 추가
-    @RequestMapping(value = "/{memberId}", method = RequestMethod.POST)
-    public ResponseEntity<?> addItemInMyBasket(){
-
-        return
+    @PostMapping("/basket/{id}")
+    public ResponseEntity<?> addItemInMyBasket(@PathVariable Long id, HttpServletRequest request){
+        return new ResponseEntity<>(Message.success(basketService.addItemInMyBasket(id,request)), HttpStatus.OK);
     }
+
 }

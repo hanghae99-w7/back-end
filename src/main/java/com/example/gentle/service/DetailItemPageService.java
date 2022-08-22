@@ -3,8 +3,6 @@ package com.example.gentle.service;
 import com.example.gentle.domain.ItemInfo;
 import com.example.gentle.dto.responseDto.Message;
 import com.example.gentle.repository.ItemInfoRepository;
-import com.example.gentle.repository.MemberRepository;
-import com.sparta.miniproject_movie_study_01.controller.response.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -9,13 +9,13 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
@@ -44,9 +44,8 @@ dependencies {
 
 
 
-
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+	useJUnitPlatform()
 }

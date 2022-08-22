@@ -42,7 +42,8 @@ public class Member extends Timestamped {
     @Column
     private Long kakaoId;
 
-    @Column
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private Authority role;
 
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {

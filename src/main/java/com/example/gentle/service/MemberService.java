@@ -10,6 +10,7 @@ import com.example.gentle.dto.requestDto.SignupRequestDto;
 import com.example.gentle.dto.responseDto.Message;
 import com.example.gentle.jwt.TokenProvider;
 import com.example.gentle.repository.MemberRepository;
+import com.example.gentle.util.Authority;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,12 +39,23 @@ public class MemberService {
     private final TokenProvider tokenProvider;
 
     //회원가입 함수
+    @Value("${ADMIN_TOKEN}")
+    private String ADMIN_TOKEN;
     @Transactional
     public ResponseEntity<?> signupMember(SignupRequestDto requestDto) {
         //현재 있는 닉네임인지 확인, 만약 널값이 아니면 이미 존재하는 이메일이란 뜻으로, 이메일이 중복된다는 메시지 출력
         if (null != isPresentEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(Message.fail("DUPLICATED_NICKNAME", "아이디가 중복됩니다."), HttpStatus.ALREADY_REPORTED);
         }
+        //사용자 role 확인
+        Authority role = Authority.USER;
+        if (requestDto.isAdmin()) {
+            if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자가 아닙니다.");
+            }
+            role = Authority.ADMIN;
+        }
+
         //중복되지 않으면 발더를 이용해 생성 후 저장
         Member member = Member.builder()
                 .email(requestDto.getEmail())
@@ -52,6 +64,7 @@ public class MemberService {
                 .country(requestDto.getCountry())
                 .name(requestDto.getName())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
+                .role(role)
                 .build();
         memberRepository.save(member);
         //리턴문
@@ -208,11 +221,17 @@ public class MemberService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
+        String gender = jsonNode.get("kakao_account")
+                .get("gender").asText();
+        String birthday = jsonNode.get("kakao_account")
+                .get("birthday").asText();
 
         System.out.println("카카오 사용자 정보: " + id + ", " + name + ", " + email);
         return KakaoUserInfoDto.builder()
                 .kakaoIdInDb(id)
                 .email(email)
+                .birth(birthday)
+                .gender(gender)
                 .name(name)
                 .build();
     }

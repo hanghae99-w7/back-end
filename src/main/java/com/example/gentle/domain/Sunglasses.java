@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ItemInfo extends Timestamped {
+public class Sunglasses extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,7 +30,4 @@ public class ItemInfo extends Timestamped {
     @Column(nullable = false)
     private String detailPageUrl;
 
-    @Column(nullable = false)
-    private String category;
-    
 }

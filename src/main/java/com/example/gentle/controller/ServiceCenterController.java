@@ -3,10 +3,7 @@ package com.example.gentle.controller;
 import com.example.gentle.dto.requestDto.ServiceCenterRequestDto;
 import com.example.gentle.service.ServiceCenterService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,11 +19,33 @@ public class ServiceCenterController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createContact(@RequestBody ServiceCenterRequestDto serviceCenterRequestDto,
+    public ResponseEntity<?> createContact(@RequestBody ServiceCenterRequestDto requestDto,
                                            HttpServletRequest request) {
+        return serviceCenterService.createContact(requestDto, request);
+    }
 
-        return serviceCenterService.createContact(serviceCenterRequestDto, request);
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<?> getContact(HttpServletRequest request) {
+        return serviceCenterService.getContact(request);
+    }
 
+    @RequestMapping(value = "/admin/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> updateAdminCheck(@PathVariable Long id,
+                                              HttpServletRequest request) {
+        return serviceCenterService.updateAdminCheck(id, request);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> updateContact(@PathVariable Long id,
+                                           @RequestBody ServiceCenterRequestDto requestDto,
+                                           HttpServletRequest request) {
+        return serviceCenterService.updateContact(id, requestDto, request);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteContact(@PathVariable Long id,
+                                           HttpServletRequest request) {
+        return serviceCenterService.deleteContact(id, request);
     }
 
 }

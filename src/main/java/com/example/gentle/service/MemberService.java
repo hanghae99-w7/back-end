@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.gentle.util.Authority.ROLE_GUEST;
 
 @RequiredArgsConstructor
 @Service
@@ -65,7 +64,6 @@ public class MemberService {
                 .gender(requestDto.getGender())
                 .country(requestDto.getCountry())
                 .name(requestDto.getName())
-                .role(ROLE_GUEST)
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .role(role)
                 .build();
@@ -143,6 +141,7 @@ public class MemberService {
             String country = "KOR";
 
             kakaoUser =Member.builder()
+                    .kakaoId(kakaoUserInfo.getKakaoIdInDb())
                     .email(email)
                     .password(encodedPassword)
                     .birth(birth)

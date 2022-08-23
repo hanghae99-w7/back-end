@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.gentle.util.Authority.ROLE_GUEST;
+
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -51,6 +53,7 @@ public class MemberService {
                 .gender(requestDto.getGender())
                 .country(requestDto.getCountry())
                 .name(requestDto.getName())
+                .role(ROLE_GUEST)
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .build();
         memberRepository.save(member);

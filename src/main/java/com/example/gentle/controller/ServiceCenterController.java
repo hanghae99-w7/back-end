@@ -25,8 +25,8 @@ public class ServiceCenterController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getContact(HttpServletRequest request) {
-        return serviceCenterService.getContact(request);
+    public ResponseEntity<?> getContact() {
+        return serviceCenterService.getContact();
     }
 
     @RequestMapping(value = "/admin/{id}", method = RequestMethod.PATCH)

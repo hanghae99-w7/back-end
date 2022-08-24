@@ -19,9 +19,9 @@ public class ItemInfoController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getItemInfo(@RequestParam String category,
-                                         @RequestParam String orderBy,
+                                         @RequestParam String orderby,
                                          Pageable pageable) {
-        return itemInfoService.getItemInfo(category, orderBy, pageable);
+        return itemInfoService.getItemInfo(category, orderby, pageable);
     }
 
     @RequestMapping(value = "/{itemId}",method = RequestMethod.GET)

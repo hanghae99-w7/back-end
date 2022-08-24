@@ -26,14 +26,14 @@ public class ItemInfoService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getItemInfo(String category,
-                                         String orderBy,
+                                         String orderby,
                                          Pageable pageable) {
 
-        if (orderBy.equals("id")) {
+        if (orderby.equals("id")) {
             List<ItemInfo> itemInfoList = itemInfoRepository.findByCategory(category, pageable);
             return getResponseEntity(itemInfoList);
 
-        } else if (orderBy.equals("priceup")) {
+        } else if (orderby.equals("priceup")) {
             List<ItemInfo> itemInfoList = itemInfoRepository.findByCategoryOrderByPriceDesc(category, pageable);
             return getResponseEntity(itemInfoList);
         }

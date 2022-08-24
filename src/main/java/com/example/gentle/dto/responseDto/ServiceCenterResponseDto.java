@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class ServiceCenterResponseDto {
     private Long id;
     private String username;
+    private String email;
     private String title;
     private String content;
     private Boolean adminChecked;

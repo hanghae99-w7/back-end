@@ -55,39 +55,13 @@ public class ServiceCenterService {
 
         serviceCenterRepository.save(serviceCenter);
 
-        return new ResponseEntity<>(
-                Message.success(
-                        ServiceCenterResponseDto.builder()
-                                .id(serviceCenter.getId())
-                                .username(serviceCenter.getMember().getName())
-                                .title(serviceCenter.getTitle())
-                                .content(serviceCenter.getContent())
-                                .adminChecked(serviceCenter.getAdminCheck())
-                                .createdAt(serviceCenter.getCreatedAt())
-                                .modifiedAt(serviceCenter.getModifiedAt())
-                                .build()
-                ),
-                HttpStatus.OK
-        );
+        return getResponseEntity(serviceCenter);
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getContact(HttpServletRequest request) {
+    public ResponseEntity<?> getContact() {
 
-        if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
-        }
-
-        Member member = validateMember(request);
-        if (null == member) {
-            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
-        }
-
-        List<ServiceCenter> serviceCenterList = serviceCenterRepository.findByMember(member);
+        List<ServiceCenter> serviceCenterList = serviceCenterRepository.findAll();
         List<ServiceCenterResponseDto> serviceCenterResponseDtoList = new ArrayList<>();
 
         for (ServiceCenter serviceCenter : serviceCenterList) {
@@ -95,6 +69,7 @@ public class ServiceCenterService {
                     ServiceCenterResponseDto.builder()
                             .id(serviceCenter.getId())
                             .username(serviceCenter.getMember().getName())
+                            .email(serviceCenter.getMember().getEmail())
                             .title(serviceCenter.getTitle())
                             .content(serviceCenter.getContent())
                             .adminChecked(serviceCenter.getAdminCheck())
@@ -131,20 +106,7 @@ public class ServiceCenterService {
 
         serviceCenter.updateAdminCheck();
 
-        return new ResponseEntity<>(
-                Message.success(
-                        ServiceCenterResponseDto.builder()
-                                .id(serviceCenter.getId())
-                                .username(serviceCenter.getMember().getName())
-                                .title(serviceCenter.getTitle())
-                                .content(serviceCenter.getContent())
-                                .adminChecked(serviceCenter.getAdminCheck())
-                                .createdAt(serviceCenter.getCreatedAt())
-                                .modifiedAt(serviceCenter.getModifiedAt())
-                                .build()
-                ),
-                HttpStatus.OK
-        );
+        return getResponseEntity(serviceCenter);
     }
 
     @Transactional
@@ -172,20 +134,7 @@ public class ServiceCenterService {
 
         serviceCenter.updateContact(requestDto);
 
-        return new ResponseEntity<>(
-                Message.success(
-                        ServiceCenterResponseDto.builder()
-                                .id(serviceCenter.getId())
-                                .username(serviceCenter.getMember().getName())
-                                .title(serviceCenter.getTitle())
-                                .content(serviceCenter.getContent())
-                                .adminChecked(serviceCenter.getAdminCheck())
-                                .createdAt(serviceCenter.getCreatedAt())
-                                .modifiedAt(serviceCenter.getModifiedAt())
-                                .build()
-                ),
-                HttpStatus.OK
-        );
+        return getResponseEntity(serviceCenter);
     }
 
     @Transactional
@@ -212,20 +161,7 @@ public class ServiceCenterService {
 
         serviceCenterRepository.delete(serviceCenter);
 
-        return new ResponseEntity<>(
-                Message.success(
-                        ServiceCenterResponseDto.builder()
-                                .id(serviceCenter.getId())
-                                .username(serviceCenter.getMember().getName())
-                                .title(serviceCenter.getTitle())
-                                .content(serviceCenter.getContent())
-                                .adminChecked(serviceCenter.getAdminCheck())
-                                .createdAt(serviceCenter.getCreatedAt())
-                                .modifiedAt(serviceCenter.getModifiedAt())
-                                .build()
-                ),
-                HttpStatus.OK
-        );
+        return getResponseEntity(serviceCenter);
     }
 
 
@@ -241,6 +177,24 @@ public class ServiceCenterService {
     public ServiceCenter getPresentServiceCenter(Long id) {
         Optional<ServiceCenter> optionalServiceCenter = serviceCenterRepository.findById(id);
         return optionalServiceCenter.orElse(null);
+    }
+
+    private ResponseEntity<?> getResponseEntity(ServiceCenter serviceCenter) {
+        return new ResponseEntity<>(
+                Message.success(
+                        ServiceCenterResponseDto.builder()
+                                .id(serviceCenter.getId())
+                                .username(serviceCenter.getMember().getName())
+                                .email(serviceCenter.getMember().getEmail())
+                                .title(serviceCenter.getTitle())
+                                .content(serviceCenter.getContent())
+                                .adminChecked(serviceCenter.getAdminCheck())
+                                .createdAt(serviceCenter.getCreatedAt())
+                                .modifiedAt(serviceCenter.getModifiedAt())
+                                .build()
+                ),
+                HttpStatus.OK
+        );
     }
 
 }

@@ -139,6 +139,7 @@ public class MemberService {
             String birth = kakaoUserInfo.getBirth();
             String gender = kakaoUserInfo.getGender();
             String country = "KOR";
+            Authority role = Authority.USER;
 
             kakaoUser =Member.builder()
                     .kakaoId(kakaoUserInfo.getKakaoIdInDb())
@@ -148,6 +149,7 @@ public class MemberService {
                     .gender(gender)
                     .name(name)
                     .country(country)
+                    .role(role)
                     .build();
             memberRepository.save(kakaoUser);
         }

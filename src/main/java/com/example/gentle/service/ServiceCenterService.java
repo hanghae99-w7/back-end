@@ -34,11 +34,11 @@ public class ServiceCenterService {
                                            HttpServletRequest request) {
 
         if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         Member member = validateMember(request);
@@ -87,11 +87,11 @@ public class ServiceCenterService {
                                               HttpServletRequest request) {
 
         if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         Member member = validateMember(request);
@@ -115,11 +115,11 @@ public class ServiceCenterService {
                                            HttpServletRequest request) {
 
         if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         Member member = validateMember(request);
@@ -142,11 +142,11 @@ public class ServiceCenterService {
                                            HttpServletRequest request) {
 
         if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
         }
 
         Member member = validateMember(request);

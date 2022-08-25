@@ -4,9 +4,11 @@ package com.example.gentle.service;
 import com.example.gentle.domain.Basket;
 import com.example.gentle.domain.ItemInfo;
 import com.example.gentle.domain.Member;
+import com.example.gentle.domain.ServiceCenter;
 import com.example.gentle.dto.requestDto.BasketRequestDto;
 import com.example.gentle.dto.responseDto.BasketResponseDto;
 import com.example.gentle.dto.responseDto.Message;
+import com.example.gentle.dto.responseDto.ServiceCenterResponseDto;
 import com.example.gentle.jwt.TokenProvider;
 import com.example.gentle.repository.BasketRepository;
 import com.example.gentle.repository.ItemInfoRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,9 +112,45 @@ public class BasketService {
     }
 
     @Transactional(readOnly = true)
+    public ResponseEntity<?> getBasketByMember (HttpServletRequest request){
+
+        if (null == request.getHeader("Refresh-Token")) {
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
+        }
+
+        Member member = validateMember(request);
+        if (null == member) {
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
+        }
+        List<Basket> basketList = basketRepository.findByMember(member);
+        List<BasketResponseDto> basketResponseDtoList = new ArrayList<>();
+        ItemInfo aa = basketList.getItemInfo();
+        for (Basket basket : basketList) {
+            basketResponseDtoList.add(
+                    BasketResponseDto.builder()
+                    .itemId(aa.getId())
+                    .detailPageUrl(aa.getDetailPageUrl())
+                    .imgUrl(aa.getImgUrl())
+                    .productName(aa.getProductName())
+                    .price(aa.getPrice())
+                    .createdAt(aa.getCreatedAt())
+                    .modifiedAt(aa.getModifiedAt())
+                    .build()
+            );
+        }
+
+        return new ResponseEntity<>(Message.success(basketResponseDtoList),HttpStatus.OK);
+        }
+        
+
     public Basket getDuplicationCheck(ItemInfo itemInfo) {
         Optional<Basket> optionalBasket = basketRepository.findByItemInfo(itemInfo);
         return optionalBasket.orElse(null);
+
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.gentle.controller;
 
+import com.example.gentle.domain.Basket;
+import com.example.gentle.domain.ItemInfo;
 import com.example.gentle.dto.requestDto.BasketRequestDto;
 import com.example.gentle.dto.responseDto.Message;
 import com.example.gentle.service.BasketService;
@@ -30,6 +32,12 @@ public class BasketController {
     @DeleteMapping("/basket/{id}")
     public ResponseEntity<?> deleteMyBasket(@PathVariable Long id) {
         return new ResponseEntity<>(Message.success(basketService.deleteMyBasket(id)),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/basket")
+    public  ResponseEntity<?> getItemInmyBasket(HttpServletRequest request){
+        return basketService.getBasketByMember(request);
     }
 
 }

@@ -5,10 +5,12 @@ import com.example.gentle.domain.Basket;
 import com.example.gentle.domain.ItemInfo;
 import com.example.gentle.domain.Member;
 import com.example.gentle.dto.requestDto.BasketRequestDto;
+import com.example.gentle.dto.responseDto.BasketResponseDto;
 import com.example.gentle.dto.responseDto.Message;
 import com.example.gentle.jwt.TokenProvider;
 import com.example.gentle.repository.BasketRepository;
 import com.example.gentle.repository.ItemInfoRepository;
+import com.sun.org.apache.bcel.internal.generic.BASTORE;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,18 +51,33 @@ public class BasketService {
         }
 
 
-        Basket intoBasket = getPresentBasket(itemInfo);
-        if (null == intoBasket) {
-            basketRepository.save(Basket.builder()
+        Basket basket = getDuplicationCheck(itemInfo);
+        if (null == basket) {
+            Basket basket1 = Basket.builder()
                     .member(member)
                     .itemInfo(itemInfo)
-                    .build());
+                    .build();
 
-            return new ResponseEntity<>(Message.success("장바구니에 담겼습니다."), HttpStatus.OK);
-        } else {
-            basketRepository.delete(intoBasket);
-            return new ResponseEntity<>(Message.success("장바구니에서 삭제되었습니다."), HttpStatus.OK);
+            basketRepository.save(basket1);
+
+            return new ResponseEntity<>(Message.success(
+                    BasketResponseDto.builder()
+                            .itemId(basket1.getItemInfo().getId())
+                            .detailPageUrl(basket1.getItemInfo().getDetailPageUrl())
+                            .imgUrl(basket1.getItemInfo().getImgUrl())
+                            .productName(basket1.getItemInfo().getProductName())
+                            .price(basket1.getItemInfo().getPrice())
+                            .createdAt(basket1.getCreatedAt())
+                            .modifiedAt(basket1.getModifiedAt())
+                            .build()
+            ),
+                    HttpStatus.OK
+            );
         }
+
+        return new ResponseEntity<>(Message.success("이미 장바구니에 담겨 있습니다."), HttpStatus.OK);
+        
+        
 
     }
 
@@ -89,6 +106,12 @@ public class BasketService {
     public ItemInfo getPresentInfo (Long id) {
         Optional<ItemInfo> optionalItemInfo = itemInfoRepository.findById(id);
         return optionalItemInfo.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Basket getDuplicationCheck(ItemInfo itemInfo) {
+        Optional<Basket> optionalBasket = basketRepository.findByItemInfo(itemInfo);
+        return optionalBasket.orElse(null);
     }
 
 }

@@ -24,4 +24,11 @@ public class BasketController {
         return new ResponseEntity<>(Message.success(basketService.addItemInMyBasket(id,request)), HttpStatus.OK);
     }
 
+
+    //상품제거
+    @DeleteMapping("/basket/{id}")
+    public ResponseEntity<?> deleteMyBasket(@PathVariable Long id) {
+        return new ResponseEntity<>(Message.success(basketService.deleteMyBasket(id)),HttpStatus.OK);
+    }
+
 }

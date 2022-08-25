@@ -61,6 +61,7 @@ public class BasketService {
 
             return new ResponseEntity<>(Message.success(
                     BasketResponseDto.builder()
+                            .basketId(basket1.getId())
                             .itemId(basket1.getItemInfo().getId())
                             .detailPageUrl(basket1.getItemInfo().getDetailPageUrl())
                             .imgUrl(basket1.getItemInfo().getImgUrl())
@@ -106,6 +107,7 @@ public class BasketService {
 
         return new ResponseEntity<>(Message.success(
                 BasketResponseDto.builder()
+                        .basketId(basket.getId())
                         .itemId(basket.getItemInfo().getId())
                         .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
                         .imgUrl(basket.getItemInfo().getImgUrl())
@@ -158,6 +160,7 @@ public class BasketService {
         for (Basket basket : basketList) {
             basketResponseDtoList.add(
                     BasketResponseDto.builder()
+                    .basketId(basket.getId())
                     .itemId(basket.getItemInfo().getId())
                     .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
                     .imgUrl(basket.getItemInfo().getImgUrl())

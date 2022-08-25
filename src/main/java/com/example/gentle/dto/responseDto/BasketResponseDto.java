@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class BasketResponseDto {
+    private Long basketId;
     private Long itemId;
     private String detailPageUrl;
     private String imgUrl ;

@@ -46,17 +46,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
-//        return (web) -> web.ignoring()
-//                .antMatchers(
-//                        "/h2-console/**"
-//                        ,"/favicon.ico"
-//                        ,"/error"
-//                );
-//    }
-
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)

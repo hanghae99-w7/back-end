@@ -27,22 +27,14 @@ public class BasketService {
     private final ItemInfoRepository itemInfoRepository;
     private final BasketRepository basketRepository;
     private final TokenProvider tokenProvider;
+
     @Transactional
     public ResponseEntity<?> addItemInMyBasket(Long id, HttpServletRequest request) {
 
 
-        if (null == request.getHeader("Refresh-Token")) {
-        return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
+        validateTokenInfo(request);
         Member member = validateMember(request);
-        if (null == member) {
-            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
-        }
+        validateTokenInfoInUserDetail(member);
 
         ItemInfo itemInfo = getPresentInfo(id);
         if (null == itemInfo) {
@@ -76,26 +68,14 @@ public class BasketService {
         }
 
         return new ResponseEntity<>(Message.success("이미 장바구니에 담겨 있습니다."), HttpStatus.OK);
-        
-        
+
 
     }
 
     @Transactional
     public ResponseEntity<?> deleteMyBasket(Long id, HttpServletRequest request) {
 
-        if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
-        Member member = validateMember(request);
-        if (null == member) {
-            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
-        }
+        validateTokenInfo(request);
 
         Basket basket = getDeleteBasket(id);
 
@@ -116,7 +96,7 @@ public class BasketService {
                         .createdAt(basket.getCreatedAt())
                         .modifiedAt(basket.getModifiedAt())
                         .build()
-        ),HttpStatus.OK);
+        ), HttpStatus.OK);
     }
 
 
@@ -128,58 +108,42 @@ public class BasketService {
         return tokenProvider.getMemberFromAuthentication();
     }
 
-    @Transactional(readOnly = true)
-    public Basket getPresentBasket (ItemInfo itemInfo) {
-        Optional<Basket> optionalBasket = basketRepository.findByItemInfo(itemInfo);
-        return optionalBasket.orElse(null);
-    }
 
     @Transactional(readOnly = true)
-    public ItemInfo getPresentInfo (Long id) {
+    public ItemInfo getPresentInfo(Long id) {
         Optional<ItemInfo> optionalItemInfo = itemInfoRepository.findById(id);
         return optionalItemInfo.orElse(null);
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getBasketByMember (HttpServletRequest request){
+    public ResponseEntity<?> getBasketByMember(HttpServletRequest request) {
 
-        if (null == request.getHeader("Refresh-Token")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
-        }
-
+        validateTokenInfo(request);
         Member member = validateMember(request);
-        if (null == member) {
-            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
-        }
+        validateTokenInfoInUserDetail(member);
+
         List<Basket> basketList = basketRepository.findByMember(member);
         List<BasketResponseDto> basketResponseDtoList = new ArrayList<>();
         for (Basket basket : basketList) {
             basketResponseDtoList.add(
                     BasketResponseDto.builder()
-                    .basketId(basket.getId())
-                    .itemId(basket.getItemInfo().getId())
-                    .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
-                    .imgUrl(basket.getItemInfo().getImgUrl())
-                    .productName(basket.getItemInfo().getProductName())
-                    .price(basket.getItemInfo().getPrice())
-                    .createdAt(basket.getCreatedAt())
-                    .modifiedAt(basket.getModifiedAt())
-                    .build()
+                            .basketId(basket.getId())
+                            .itemId(basket.getItemInfo().getId())
+                            .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
+                            .imgUrl(basket.getItemInfo().getImgUrl())
+                            .productName(basket.getItemInfo().getProductName())
+                            .price(basket.getItemInfo().getPrice())
+                            .createdAt(basket.getCreatedAt())
+                            .modifiedAt(basket.getModifiedAt())
+                            .build()
             );
         }
 
-        return new ResponseEntity<>(Message.success(basketResponseDtoList),HttpStatus.OK);
-        }
-        
+        return new ResponseEntity<>(Message.success(basketResponseDtoList), HttpStatus.OK);
+    }
 
     public Basket getDuplicationCheck(ItemInfo itemInfo) {
-        Optional<Basket> optionalBasket = basketRepository.findByItemInfo(itemInfo);
-        return optionalBasket.orElse(null);
-
+        return basketRepository.findByItemInfo(itemInfo);
     }
 
     public Basket getDeleteBasket(Long id) {
@@ -187,4 +151,24 @@ public class BasketService {
         return optionalBasket.orElse(null);
     }
 
+    public ResponseEntity<?> validateTokenInfo(HttpServletRequest request) {
+        ResponseEntity<?> result = new ResponseEntity<>("", HttpStatus.OK);
+        if (null == request.getHeader("Refresh-Token")) {
+            result = new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            result = new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "로그인이 필요합니다."), HttpStatus.UNAUTHORIZED);
+        }
+
+        return result;
+    }
+
+    public ResponseEntity<?> validateTokenInfoInUserDetail(Member member) {
+        ResponseEntity<?> result = new ResponseEntity<>("", HttpStatus.OK);
+        if (null == member) {
+            result = new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
+        }
+        return result;
+    }
 }

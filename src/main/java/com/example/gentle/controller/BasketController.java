@@ -30,8 +30,8 @@ public class BasketController {
 
     //상품제거
     @DeleteMapping("/basket/{id}")
-    public ResponseEntity<?> deleteMyBasket(@PathVariable Long id) {
-        return new ResponseEntity<>(Message.success(basketService.deleteMyBasket(id)),HttpStatus.OK);
+    public ResponseEntity<?> deleteMyBasket(@PathVariable Long id,HttpServletRequest request) {
+        return basketService.deleteMyBasket(id,request);
     }
 
 

@@ -85,9 +85,40 @@ public class BasketService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteMyBasket(Long id) {
-        basketRepository.deleteById(id);
-        return new ResponseEntity<>(Message.success("장바구니에서 삭제되었습니다."),HttpStatus.OK);
+    public ResponseEntity<?> deleteMyBasket(Long id, HttpServletRequest request) {
+
+        if (null == request.getHeader("Refresh-Token")) {
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
+        }
+
+        Member member = validateMember(request);
+        if (null == member) {
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
+        }
+
+        Basket basket = getDeleteBasket(id);
+
+        if (null == basket) {
+            return new ResponseEntity<>(Message.fail("ITEM_NOT_FOUND", "해당 아이템이 없습니다."), HttpStatus.NOT_FOUND);
+        }
+
+        basketRepository.delete(basket);
+
+        return new ResponseEntity<>(Message.success(
+                BasketResponseDto.builder()
+                        .itemId(basket.getItemInfo().getId())
+                        .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
+                        .imgUrl(basket.getItemInfo().getImgUrl())
+                        .productName(basket.getItemInfo().getProductName())
+                        .price(basket.getItemInfo().getPrice())
+                        .createdAt(basket.getCreatedAt())
+                        .modifiedAt(basket.getModifiedAt())
+                        .build()
+        ),HttpStatus.OK);
     }
 
 
@@ -150,6 +181,11 @@ public class BasketService {
         Optional<Basket> optionalBasket = basketRepository.findByItemInfo(itemInfo);
         return optionalBasket.orElse(null);
 
+    }
+
+    public Basket getDeleteBasket(Long id) {
+        Optional<Basket> optionalBasket = basketRepository.findById(id);
+        return optionalBasket.orElse(null);
     }
 
 }

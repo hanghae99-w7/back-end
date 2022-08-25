@@ -33,8 +33,8 @@ public class ServiceCenter extends Timestamped {
     private Boolean adminCheck;
 
 
-    public void updateAdminCheck() {
-        this.adminCheck = true;
+    public void updateAdminCheck(Boolean adminCheck) {
+        this.adminCheck = adminCheck;
     }
 
     public void updateContact(ServiceCenterRequestDto requestDto) {

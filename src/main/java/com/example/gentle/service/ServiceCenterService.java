@@ -104,7 +104,13 @@ public class ServiceCenterService {
             return new ResponseEntity<>(Message.fail("CONTACT_NOT_FOUND", "존재하지 않는 문의사항 입니다."), HttpStatus.NOT_FOUND);
         }
 
-        serviceCenter.updateAdminCheck();
+        if (!serviceCenter.getAdminCheck()) {
+            serviceCenter.updateAdminCheck(true);
+
+            return getResponseEntity(serviceCenter);
+        }
+
+        serviceCenter.updateAdminCheck(false);
 
         return getResponseEntity(serviceCenter);
     }

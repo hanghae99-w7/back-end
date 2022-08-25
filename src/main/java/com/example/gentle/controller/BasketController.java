@@ -35,6 +35,7 @@ public class BasketController {
     }
 
 
+    //잠바구니 상품 조회
     @GetMapping("/basket")
     public  ResponseEntity<?> getItemInmyBasket(HttpServletRequest request){
         return basketService.getBasketByMember(request);

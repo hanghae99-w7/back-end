@@ -82,6 +82,13 @@ public class BasketService {
     }
 
     @Transactional
+    public ResponseEntity<?> deleteMyBasket(Long id) {
+        basketRepository.deleteById(id);
+        return new ResponseEntity<>(Message.success("장바구니에서 삭제되었습니다."),HttpStatus.OK);
+    }
+
+
+    @Transactional
     public Member validateMember(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             return null;

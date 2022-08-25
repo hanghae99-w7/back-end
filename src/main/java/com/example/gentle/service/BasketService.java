@@ -128,17 +128,16 @@ public class BasketService {
         }
         List<Basket> basketList = basketRepository.findByMember(member);
         List<BasketResponseDto> basketResponseDtoList = new ArrayList<>();
-        ItemInfo aa = basketList.getItemInfo();
         for (Basket basket : basketList) {
             basketResponseDtoList.add(
                     BasketResponseDto.builder()
-                    .itemId(aa.getId())
-                    .detailPageUrl(aa.getDetailPageUrl())
-                    .imgUrl(aa.getImgUrl())
-                    .productName(aa.getProductName())
-                    .price(aa.getPrice())
-                    .createdAt(aa.getCreatedAt())
-                    .modifiedAt(aa.getModifiedAt())
+                    .itemId(basket.getItemInfo().getId())
+                    .detailPageUrl(basket.getItemInfo().getDetailPageUrl())
+                    .imgUrl(basket.getItemInfo().getImgUrl())
+                    .productName(basket.getItemInfo().getProductName())
+                    .price(basket.getItemInfo().getPrice())
+                    .createdAt(basket.getCreatedAt())
+                    .modifiedAt(basket.getModifiedAt())
                     .build()
             );
         }

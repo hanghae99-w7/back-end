@@ -19,9 +19,10 @@ public class BasketController {
     private final BasketService basketService;
 
     // 장바구니에 상품 추가
-    @PostMapping("/basket/{id}")
-    public ResponseEntity<?> addItemInMyBasket(@PathVariable Long id, HttpServletRequest request){
-        return new ResponseEntity<>(Message.success(basketService.addItemInMyBasket(id,request)), HttpStatus.OK);
+    @RequestMapping(value = "/basket/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> addItemInMyBasket(@PathVariable Long id,
+                                               HttpServletRequest request) {
+        return basketService.addItemInMyBasket(id, request);
     }
 
 }

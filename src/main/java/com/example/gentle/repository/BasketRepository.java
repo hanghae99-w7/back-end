@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BasketRepository extends JpaRepository<Basket,Long> {
-
+    List<Basket>findByMember(Member member);
     Optional<Basket> findByItemInfo(ItemInfo itemInfo);
 
 }
